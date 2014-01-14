@@ -8,12 +8,14 @@ Bundle-Vendor: Gabriele Carcassi <carcassi@bnl.gov>, Kay Kasemir <kasemirk@ornl.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit,
  org.csstudio.autocomplete.ui,
+ org.eclipse.swt;bundle-version="3.7.2",
  org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.jface;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.ui.workbench;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.core.resources;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.rap.ui;bundle-version="1.5.0";resolution:=optional,
- org.eclipse.rap.ui.workbench;bundle-version="1.5.0";resolution:=optional
+ org.eclipse.rap.ui.workbench;bundle-version="1.5.0";resolution:=optional,
+ org.eclipse.ui;bundle-version="3.7.0"
 Export-Package: org.csstudio.ui.util,
  org.csstudio.ui.util.composites,
  org.csstudio.ui.util.dialogs,

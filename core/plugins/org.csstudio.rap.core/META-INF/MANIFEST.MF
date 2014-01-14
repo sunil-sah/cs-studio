@@ -14,5 +14,5 @@ Bundle-Vendor: Xihui Chen<chenx1@ornl.gov> - SNS
 Export-Package: org.csstudio.rap.core,
  org.csstudio.rap.core.preferences,
  org.csstudio.rap.core.security
-Import-Package: javax.servlet,
+Import-Package: javax.servlet;version="2.6.0",
  javax.servlet.http
