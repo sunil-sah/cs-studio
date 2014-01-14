@@ -9,12 +9,12 @@ classes/
 build/build
 build/ext
 
-dist
-
 # ignore all log files ?
 logs/*.log
 log/*.log
 
+# ignore tycho build folder
+*target/
 
 # SNS, KEK Products: Ignore output of headless build
 syntax: glob
