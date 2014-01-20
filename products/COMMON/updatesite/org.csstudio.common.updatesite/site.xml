@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.csstudio.common.ca.feature_3.2.0.qualifier.jar" id="org.csstudio.common.ca.feature" version="3.2.0.qualifier">
+      <category name="org.csstudio.common.updatesite"/>
+   </feature>
+   <feature url="features/org.csstudio.common.core.feature_3.2.0.qualifier.jar" id="org.csstudio.common.core.feature" version="3.2.0.qualifier">
+      <category name="org.csstudio.common.updatesite"/>
+   </feature>
+   <feature url="features/org.csstudio.common.product.feature_3.2.0.qualifier.jar" id="org.csstudio.common.product.feature" version="3.2.0.qualifier">
+      <category name="org.csstudio.common.updatesite"/>
+   </feature>
+   <feature url="features/org.csstudio.common.utilities.features_3.2.0.qualifier.jar" id="org.csstudio.common.utilities.features" version="3.2.0.qualifier">
+      <category name="org.csstudio.common.updatesite"/>
+   </feature>
+   <category-def name="org.csstudio.common.updatesite" label="Common CSS Update Site"/>
+</site>

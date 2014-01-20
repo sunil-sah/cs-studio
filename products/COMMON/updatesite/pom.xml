@@ -9,8 +9,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>org.csstudio.pluginsproduct.parent</artifactId>
+  <artifactId>org.csstudio.updatesitescommon.parent</artifactId>
   <packaging>pom</packaging>
-  <name>pluginsproduct</name>
+  <name>updatesitescommon</name>
 
 </project>
