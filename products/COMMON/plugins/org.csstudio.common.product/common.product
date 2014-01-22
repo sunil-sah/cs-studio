@@ -68,6 +68,7 @@
       <feature id="org.eclipse.help"/>
       <feature id="org.eclipse.platform"/>
       <feature id="org.csstudio.common.product.feature"/>
+      <feature id="org.csstudio.common.lib.feature"/>
       <feature id="org.csstudio.common.core.feature"/>
       <feature id="org.csstudio.common.ca.feature"/>
       <feature id="org.csstudio.common.utilities.features"/>
