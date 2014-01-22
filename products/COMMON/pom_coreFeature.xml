@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+	PARENT
+  -->
+  <parent>
+    <groupId>org.csstudio</groupId>
+    <artifactId>master</artifactId>
+    <version>BUILD-VERSION</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <!--
+	ARTIFACT
+  -->
+  <groupId>org.csstudio</groupId>
+  <artifactId>parent</artifactId>
+  <packaging>pom</packaging>
+  <!--
+	DESCRIPTION
+  -->
+  <name>CSS Common Core Feature</name>
+  <description>
+	CSS Common Core Feature
+  </description>
+  <!--
+	LICENSES
+  -->
+  <licenses>
+    <license>
+      <name>EPL v1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license> 
+  </licenses>
+  <!--
+	MODULES
+  -->
+  <modules>
+	<!--
+	  Plug-ins (feature org.csstudio.common.core.feature)
+    -->
+	<module>../../applications/plugins/com.google.common</module>
+	<module>../../applications/plugins/org.epics.graphene</module>
+    <module>../../applications/plugins/org.csstudio.utility.pvmanager.graphene</module>
+	<module>../../core/plugins/org.antlr.runtime</module>
+	<module>../../core/plugins/org.csstudio.autocomplete</module>
+	<module>../../core/plugins/org.csstudio.autocomplete.ui</module>
+	<module>../../core/plugins/org.csstudio.csdata</module>
+	<module>../../core/plugins/org.csstudio.data</module>
+	<module>../../core/plugins/org.csstudio.java</module>
+	<module>../../core/plugins/org.csstudio.platform.libs.jdbc</module>
+	<module>../../core/plugins/org.csstudio.ui.help</module>
+	<module>../../core/plugins/org.csstudio.rap.core</module>
+	<module>../../core/plugins/org.csstudio.rap.ui.util</module>
+	<module>../../core/plugins/org.csstudio.ui.menu</module>
+	<module>../../core/plugins/org.csstudio.ui.preferences</module>
+	<module>../../core/plugins/org.csstudio.ui.util</module>
+	<module>../../core/plugins/org.csstudio.utility.pv</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.extra</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.file</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.jdbc</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.loc</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.sim</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.sys</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.ui</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.ui.toolbox</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.vtype</module>
+	<module>../../core/plugins/org.csstudio.utility.pvmanager.widgets</module>
+    <module>../../core/plugins/org.epics.util</module>
+    <module>../../core/plugins/org.epics.vtype</module>
+		
+    <!--
+	  Features
+	-->
+    <module>./features/org.csstudio.common.core.feature</module>	
+
+ </modules>
+</project>

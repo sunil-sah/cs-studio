@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+	PARENT
+  -->
+  <parent>
+    <groupId>org.csstudio</groupId>
+    <artifactId>master</artifactId>
+    <version>BUILD-VERSION</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <!--
+	ARTIFACT
+  -->
+  <groupId>org.csstudio</groupId>
+  <artifactId>parent</artifactId>
+  <packaging>pom</packaging>
+  <!--
+	DESCRIPTION
+  -->
+  <name>CSS</name>
+  <description>
+	CSS Common
+  </description>
+  <!--
+	LICENSES
+  -->
+  <licenses>
+    <license>
+      <name>EPL v1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license> 
+  </licenses>
+  <!--
+	MODULES
+  -->
+  <modules>
+	<!--
+	  Plug-ins (feature org.csstudio.common.utilities.feature)
+    -->
+	<module>../../applications/plugins/org.csstudio.diag.pvmanager.probe</module>
+		
+    <!--
+	  Features
+	-->
+	<module>./features/org.csstudio.common.utilities.features</module>	
+
+ </modules>
+</project>
