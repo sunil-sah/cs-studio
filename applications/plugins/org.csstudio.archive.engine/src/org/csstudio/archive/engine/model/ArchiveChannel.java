@@ -134,6 +134,11 @@ abstract public class ArchiveChannel
                 if (is_running)
                 {
                     final IValue value = pv.getValue();
+                    if (value == null)
+                    {
+                        Activator.getLogger().log(Level.INFO, "Null value from {0}", name);
+                        return;
+                    }
                     if (enablement != Enablement.Passive)
                         handleEnablement(value);
                     handleNewValue(value);
