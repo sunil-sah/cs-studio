@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.csstudio.screen.capture.PeroidicScreenCapture"
+            id="org.csstudio.screen.capture"
+            name="publish screen capture">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:utility">
+         <command
+               commandId="org.csstudio.screen.capture"
+               label="Publish Screen Capture"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
