@@ -70,12 +70,14 @@ public class PeroidicScreenCapture extends AbstractHandler {
 			    .getActiveWorkbenchWindow().getActivePage();
 		    IFile ifile = IFileUtil.getInstance().createFileResource(
 			    files[i]);
+		    if(files[i].getName().endsWith(".opi")){
 		    IEditorDescriptor desc = PlatformUI.getWorkbench()
 			    .getEditorRegistry()
 			    .getDefaultEditor(files[i].getName());
 		    IEditorPart part = page.openEditor(new FileEditorInput(
 			    ifile), desc.getId());
 		    partRegistryMap.put(ifile.getName(), part);
+		    }
 		}
 	    }
 	} catch (PartInitException e) {
@@ -97,11 +99,12 @@ public class PeroidicScreenCapture extends AbstractHandler {
 			    @Override
 			    public void run() {
 				try {
+				    String key = entry.getKey();
 				    page.bringToTop(entry.getValue());	
 				    Image image = Screenshot.getApplicationScreenshot();
 				    ImageLoader loader = new ImageLoader();
 				    loader.data = new ImageData[] { image.getImageData() };
-				    loader.save(outputFolder+entry.getKey()+".png", SWT.IMAGE_PNG);
+				    loader.save(outputFolder+key+".png", SWT.IMAGE_PNG);
 				    image.dispose();
 				} catch (Exception e) {
 				    // TODO Auto-generated catch block
