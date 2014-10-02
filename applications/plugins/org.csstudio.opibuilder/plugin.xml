@@ -14,6 +14,14 @@
             id="org.csstudio.opibuilder.OPIRunner"
             name="OPI Runtime">
       </editor>
+      <editor
+            default="true"
+            extensions="opi"
+            icon="icons/OPIRunner.png"
+            id="org.csstudio.opibuilder.DisplayRuntime"
+            launcher="org.csstudio.opibuilder.runmode.DisplayLauncher"
+            name="Display Runtime">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
