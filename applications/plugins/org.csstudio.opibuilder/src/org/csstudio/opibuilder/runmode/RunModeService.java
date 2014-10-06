@@ -38,9 +38,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
-/**The service for running of OPI.
- * @author Xihui Chen
- *
+/** Service for executing a display
+ *  @author Xihui Chen - Original author
+ *  @author Kay Kasemir
  */
 public class RunModeService {
 
@@ -164,12 +164,11 @@ public class RunModeService {
 						if(shell.getMinimized())
 							shell.setMinimized(false);
 						targetWindow.getShell().forceActive();
-						targetWindow.getShell().forceFocus();	
-						targetWindow.getActivePage().openEditor(
-								runnerInput, OPIRunner.ID); //$NON-NLS-1$
+						targetWindow.getShell().forceFocus();
+						openNewOPIView(runnerInput, targetWindow.getActivePage(), Position.DEFAULT_VIEW);
 						if(!SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
 							targetWindow.getShell().moveAbove(null);
-					} catch (PartInitException e) {
+					} catch (Exception e) {
 						OPIBuilderPlugin.getLogger().log(Level.WARNING,
 						        "Failed to run OPI " + path.lastSegment(), e);
 					}
@@ -212,38 +211,9 @@ public class RunModeService {
 						    }
 						}
 					}
-					
-					// Open a new view					
-					if(position != Position.DETACHED && position != Position.DEFAULT_VIEW &&
-							!(page.getPerspective().getId().equals(OPIRunnerPerspective.ID))){
-						int openCode=0;
-						if(!OPIBuilderPlugin.isRAP() && PreferencesHelper.isShowOpiRuntimePerspectiveDialog()){
-							TipDialog dialog = new TipDialog(window.getShell(), MessageDialog.QUESTION, 
-									"Switch to OPI Runtime Perspective", 
-									"To open the OPI View in expected position, you need to switch to OPI Runtime perspective."+
-								"\nDo you want to switch to it now?");
-							openCode=dialog.open();								
-							if(!dialog.isShowThisDialogAgain())
-								PreferencesHelper.setShowOpiRuntimePerspectiveDialog(false);
-						}
-						if(openCode==0 ||openCode==Window.OK)
-							PerspectiveHelper.showPerspective(OPIRunnerPerspective.ID, window.getActivePage());						
-					}
-
-					// View will receive input from us, should ignore previous memento
-					OPIView.ignoreMemento();
-					// TODO Opening in selected location does not work this way
-					//      See https://bugs.eclipse.org/bugs/show_bug.cgi?id=408891, https://github.com/ControlSystemStudio/cs-studio/issues/142
-					final String secondID =  OPIView.createSecondaryID() + position.name();
-					final IViewPart view = page.showView(OPIView.ID, secondID, IWorkbenchPage.VIEW_ACTIVATE);					
-					if (! (view instanceof OPIView))
-					    throw new PartInitException("Expected OPIView, got " + view);
-					final OPIView opiView = (OPIView)view;
-					opiView.setOPIInput(runnerInput);
-					if (position == Position.DETACHED)
-						SingleSourcePlugin.getUIHelper().detachView(opiView);
+					openNewOPIView(runnerInput, page, position);
 				}
-				catch (PartInitException e)
+				catch (Exception e)
 				{
 					ErrorHandlerUtil.handleError(NLS.bind("Failed to run OPI {1} in view.", path), e);
 				}
@@ -251,6 +221,56 @@ public class RunModeService {
 		});
 	}
 	
+	/** Open a new View that executes a display
+	 *  @param runnerInput {@link RunnerInput}
+	 *  @param page {@link IWorkbenchPage}
+	 *  @param position {@link Position}
+	 *  @return {@link OPIView}
+	 *  @throws Exception on error
+	 */
+	public static OPIView openNewOPIView(final RunnerInput runnerInput, final IWorkbenchPage page, final Position position) throws Exception
+	{
+        // TODO Fix control of initial location
+	    // Opening in selected location does not work this way
+        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=408891, https://github.com/ControlSystemStudio/cs-studio/issues/142
+	    
+	    // Switch to suitable perspective?
+        if (position != Position.DETACHED && position != Position.DEFAULT_VIEW &&
+            !(page.getPerspective().getId().equals(OPIRunnerPerspective.ID)))
+        {
+            int openCode=0;
+            if (!OPIBuilderPlugin.isRAP() && PreferencesHelper.isShowOpiRuntimePerspectiveDialog())
+            {
+                TipDialog dialog = new TipDialog(page.getWorkbenchWindow().getShell(), MessageDialog.QUESTION, 
+                        "Switch to OPI Runtime Perspective", 
+                        "To open the OPI View in expected position, you need to switch to OPI Runtime perspective."+
+                    "\nDo you want to switch to it now?");
+                openCode = dialog.open();
+                if (!dialog.isShowThisDialogAgain())
+                    PreferencesHelper.setShowOpiRuntimePerspectiveDialog(false);
+            }
+            if (openCode==0 ||openCode==Window.OK)
+                PerspectiveHelper.showPerspective(OPIRunnerPerspective.ID, page);
+        }
+
+        // Open new View
+        // View will receive input from us, should ignore previous memento
+        OPIView.ignoreMemento();
+        final String secondID =  OPIView.createSecondaryID() + position.name();
+        final IViewPart view = page.showView(OPIView.ID, secondID, IWorkbenchPage.VIEW_ACTIVATE);
+        if (! (view instanceof OPIView))
+            throw new PartInitException("Expected OPIView, got " + view);
+        final OPIView opiView = (OPIView) view;
+        
+        // Set content of view
+        opiView.setOPIInput(runnerInput);
+        
+        // Adjust position
+        if (position == Position.DETACHED)
+            SingleSourcePlugin.getUIHelper().detachView(opiView);
+
+        return opiView;
+	}
 	
 	/**
 	 * @param windowBounds
