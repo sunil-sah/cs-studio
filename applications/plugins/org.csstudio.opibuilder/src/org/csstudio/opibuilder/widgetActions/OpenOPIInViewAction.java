@@ -28,7 +28,7 @@ public class OpenOPIInViewAction extends AbstractOpenOPIAction {
 	protected void configureProperties() {
 		super.configureProperties();
 		addProperty(new ComboProperty(PROP_POSITION, "Position", WidgetPropertyCategory.Basic,
-				Position.stringValues(), 1));
+				Position.stringValues(), Position.DEFAULT_VIEW.ordinal()));
 	}
 	
 	@Override

@@ -44,197 +44,185 @@ import org.eclipse.ui.WorkbenchException;
  */
 public class RunModeService {
 
-	public enum TargetWindow{
-		NEW_WINDOW,
-		SAME_WINDOW,
-		RUN_WINDOW;
-	}
+    public enum TargetWindow{
+        NEW_WINDOW,
+        SAME_WINDOW,
+        RUN_WINDOW;
+    }
 
-	private IWorkbenchWindow runWorkbenchWindow;
-
-
-	private static RunModeService instance;
-
-	public static RunModeService getInstance(){
-		if(instance == null)
-			instance = new RunModeService();
-		return instance;
-	}
+    private IWorkbenchWindow runWorkbenchWindow;
 
 
-	public IWorkbenchWindow getRunWorkbenchWindow(){
-		return runWorkbenchWindow;
-	}
-//
-//	
-//	
-//
-//	public void replaceActiveEditorContent(IRunnerInput input) throws PartInitException{
-//		IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().
-//			getActivePage().getActiveEditor();
-//		activeEditor.init(activeEditor.getEditorSite(),input);
-//	}
-	
-	public static void replaceOPIRuntimeContent(
-			final IOPIRuntime opiRuntime, final IEditorInput input) throws PartInitException{
-		opiRuntime.setOPIInput(input);
-	}
+    private static RunModeService instance;
 
-	/**Run an OPI file with necessary parameters. This function should be called when open an OPI
-	 * from another OPI.
-	 * @param path
-	 * @param targetWindow
-	 * @param displayOpenManager
-	 * @param macrosInput
-	 */
-	public void runOPI(IPath path, TargetWindow targetWindow, DisplayOpenManager displayOpenManager,
-			MacrosInput macrosInput){
-		runOPI(path, targetWindow, displayOpenManager, macrosInput, null);
-	}
+    public static RunModeService getInstance(){
+        if(instance == null)
+            instance = new RunModeService();
+        return instance;
+    }
 
-	/**Run an OPI file in the target window.
-	 * @param path
-	 * @param targetWindow
-	 */
-	public void runOPI(IPath path, TargetWindow targetWindow, Rectangle windowSize){
-		runOPI(path, targetWindow, null, null, windowSize);
-	}
 
-	/**Run an OPI file.
-	 * @param path the file to be ran. If displayModel is not null, this will be ignored.
-	 * @param displayModel the display model to be ran. null for file input only.
-	 * @param displayOpenManager the manager help to manage the opened displays. null if the OPI is not
-	 * replacing the current active display.
-	 */
-	public void runOPI(final IPath path, final TargetWindow target,
-			final DisplayOpenManager displayOpenManager, final MacrosInput macrosInput, final Rectangle windowBounds){
-		final RunnerInput runnerInput = new RunnerInput(path, displayOpenManager, macrosInput);
-		UIBundlingThread.getInstance().addRunnable(new Runnable(){
-			 public void run() {
+    public IWorkbenchWindow getRunWorkbenchWindow(){
+        return runWorkbenchWindow;
+    }
+    
+    public static void replaceOPIRuntimeContent(
+            final IOPIRuntime opiRuntime, final IEditorInput input) throws PartInitException{
+        opiRuntime.setOPIInput(input);
+    }
 
-				IWorkbenchWindow targetWindow = null;
-				switch (target) {
-				case NEW_WINDOW:
-					if(SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
-						SingleSourceHelper.rapOpenOPIInNewWindow(path);
-					else
-						targetWindow = createNewWindow(windowBounds);
-					break;
-				case RUN_WINDOW:
-					if(runWorkbenchWindow == null){
-						runWorkbenchWindow = createNewWindow(windowBounds);
-						runWorkbenchWindow.addPageListener(new IPageListener(){
-							public void pageClosed(IWorkbenchPage page) {
-								runWorkbenchWindow = null;
-							}
+    /**Run an OPI file with necessary parameters. This function should be called when open an OPI
+     * from another OPI.
+     * @param path
+     * @param targetWindow
+     * @param displayOpenManager
+     * @param macrosInput
+     */
+    public void runOPI(IPath path, TargetWindow targetWindow, DisplayOpenManager displayOpenManager,
+            MacrosInput macrosInput){
+        runOPI(path, targetWindow, displayOpenManager, macrosInput, null);
+    }
 
-							public void pageActivated(IWorkbenchPage page) {
-							    // NOP
-							}
+    /**Run an OPI file in the target window.
+     * @param path
+     * @param targetWindow
+     */
+    public void runOPI(IPath path, TargetWindow targetWindow, Rectangle windowSize){
+        runOPI(path, targetWindow, null, null, windowSize);
+    }
 
-							public void pageOpened(IWorkbenchPage page) {
+    /**Run an OPI file.
+     * @param path the file to be ran. If displayModel is not null, this will be ignored.
+     * @param displayModel the display model to be ran. null for file input only.
+     * @param displayOpenManager the manager help to manage the opened displays. null if the OPI is not
+     * replacing the current active display.
+     */
+    public void runOPI(final IPath path, final TargetWindow target,
+            final DisplayOpenManager displayOpenManager, final MacrosInput macrosInput, final Rectangle windowBounds){
+        final RunnerInput runnerInput = new RunnerInput(path, displayOpenManager, macrosInput);
+        UIBundlingThread.getInstance().addRunnable(new Runnable(){
+             public void run() {
+
+                IWorkbenchWindow targetWindow = null;
+                switch (target) {
+                case NEW_WINDOW:
+                    if(SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
+                        SingleSourceHelper.rapOpenOPIInNewWindow(path);
+                    else
+                        targetWindow = createNewWindow(windowBounds);
+                    break;
+                case RUN_WINDOW:
+                    if(runWorkbenchWindow == null){
+                        runWorkbenchWindow = createNewWindow(windowBounds);
+                        runWorkbenchWindow.addPageListener(new IPageListener(){
+                            public void pageClosed(IWorkbenchPage page) {
+                                runWorkbenchWindow = null;
+                            }
+
+                            public void pageActivated(IWorkbenchPage page) {
                                 // NOP
-							}
-						});
-					}else{
-						for(IEditorReference editor :
-							runWorkbenchWindow.getActivePage().getEditorReferences()){
-							try {
-								if(editor.getEditorInput().equals(runnerInput))
-									editor.getPage().closeEditor(editor.getEditor(false), false);
-							} catch (PartInitException e) {
-						         OPIBuilderPlugin.getLogger().log(Level.WARNING,
-						                    "Cannot close editor", e); //$NON-NLS-1$
-							}
-						}
-					}
-					targetWindow = runWorkbenchWindow;
-					break;
-				case SAME_WINDOW:
-				default:
-					targetWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					break;
-				}
+                            }
+
+                            public void pageOpened(IWorkbenchPage page) {
+                                // NOP
+                            }
+                        });
+                    }else{
+                        for(IEditorReference editor :
+                            runWorkbenchWindow.getActivePage().getEditorReferences()){
+                            try {
+                                if(editor.getEditorInput().equals(runnerInput))
+                                    editor.getPage().closeEditor(editor.getEditor(false), false);
+                            } catch (PartInitException e) {
+                                 OPIBuilderPlugin.getLogger().log(Level.WARNING,
+                                            "Cannot close editor", e); //$NON-NLS-1$
+                            }
+                        }
+                    }
+                    targetWindow = runWorkbenchWindow;
+                    break;
+                case SAME_WINDOW:
+                default:
+                    targetWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                    break;
+                }
 
 
 
-				if(targetWindow != null){
-					try {
-						Shell shell = targetWindow.getShell();
-						if(shell.getMinimized())
-							shell.setMinimized(false);
-						targetWindow.getShell().forceActive();
-						targetWindow.getShell().forceFocus();
-						openNewOPIView(runnerInput, targetWindow.getActivePage(), Position.DEFAULT_VIEW);
-						if(!SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
-							targetWindow.getShell().moveAbove(null);
-					} catch (Exception e) {
-						OPIBuilderPlugin.getLogger().log(Level.WARNING,
-						        "Failed to run OPI " + path.lastSegment(), e);
-					}
-				}
+                if(targetWindow != null){
+                    try {
+                        Shell shell = targetWindow.getShell();
+                        if(shell.getMinimized())
+                            shell.setMinimized(false);
+                        targetWindow.getShell().forceActive();
+                        targetWindow.getShell().forceFocus();
+                        openNewOPIView(runnerInput, targetWindow.getActivePage(), Position.DEFAULT_VIEW);
+                        if(!SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
+                            targetWindow.getShell().moveAbove(null);
+                    } catch (Exception e) {
+                        OPIBuilderPlugin.getLogger().log(Level.WARNING,
+                                "Failed to run OPI " + path.lastSegment(), e);
+                    }
+                }
 
-				}
-			});
-	}
+                }
+            });
+    }
 
 
-	public static void runOPIInView(final IPath path, 
-			final DisplayOpenManager displayOpenManager, final MacrosInput macrosInput, final Position position){
-		OPIView.setOpenedByUser(true);
-		final RunnerInput runnerInput = new RunnerInput(path, displayOpenManager, macrosInput);
-		UIBundlingThread.getInstance().addRunnable(new Runnable() {
-			
-			public void run() {
-			    final IWorkbench workbench = PlatformUI.getWorkbench();
-	            final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-	            final IWorkbenchPage page = window.getActivePage();
-				try {
-					IViewReference[] viewReferences = page.getViewReferences();
-					//If it is already opened.
-					for(IViewReference viewReference : viewReferences){
-						if(viewReference.getId().equals(OPIView.ID)){
-						    final IViewPart view = viewReference.getView(true);
-						    if (view instanceof IOPIRuntime)
-						    {
-						        final IOPIRuntime opi_view = (IOPIRuntime)view;
-    							if (runnerInput.equals(opi_view.getOPIInput()))
-    							{
-    								page.showView(OPIView.ID, viewReference.getSecondaryId(), IWorkbenchPage.VIEW_ACTIVATE);
-    								return;								
-    							}
-						    }
-						    else
-						    {
-					            OPIBuilderPlugin.getLogger().log(Level.WARNING,
-				                    "Found view " + view.getTitle() + " but its type is " + view.getClass().getName());
-						    }
-						}
-					}
-					openNewOPIView(runnerInput, page, position);
-				}
-				catch (Exception e)
-				{
-					ErrorHandlerUtil.handleError(NLS.bind("Failed to run OPI {1} in view.", path), e);
-				}
-			}
-		});
-	}
-	
-	/** Open a new View that executes a display
-	 *  @param runnerInput {@link RunnerInput}
-	 *  @param page {@link IWorkbenchPage}
-	 *  @param position {@link Position}
-	 *  @return {@link OPIView}
-	 *  @throws Exception on error
-	 */
-	public static OPIView openNewOPIView(final RunnerInput runnerInput, final IWorkbenchPage page, final Position position) throws Exception
-	{
-        // TODO Fix control of initial location
-	    // Opening in selected location does not work this way
-        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=408891, https://github.com/ControlSystemStudio/cs-studio/issues/142
-	    
-	    // Switch to suitable perspective?
+    public static void runOPIInView(final IPath path, 
+            final DisplayOpenManager displayOpenManager, final MacrosInput macrosInput, final Position position)
+    {
+        OPIView.setOpenedByUser(true);
+        final RunnerInput runnerInput = new RunnerInput(path, displayOpenManager, macrosInput);
+        UIBundlingThread.getInstance().addRunnable(new Runnable()
+        {
+            public void run()
+            {
+                final IWorkbench workbench = PlatformUI.getWorkbench();
+                final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+                final IWorkbenchPage page = window.getActivePage();
+                try
+                {
+                    IViewReference[] viewReferences = page.getViewReferences();
+                    //If it is already opened.
+                    for (IViewReference viewReference : viewReferences)
+                        if (viewReference.getId().startsWith(OPIView.ID))
+                        {
+                            final IViewPart view = viewReference.getView(true);
+                            if (view instanceof OPIView)
+                            {
+                                final OPIView opi_view = (OPIView)view;
+                                if (runnerInput.equals(opi_view.getOPIInput()))
+                                {
+                                    page.showView(viewReference.getId(), viewReference.getSecondaryId(), IWorkbenchPage.VIEW_ACTIVATE);
+                                    return;
+                                }
+                            }
+                            else
+                                OPIBuilderPlugin.getLogger().log(Level.WARNING,
+                                    "Found view " + view.getTitle() + " but its type is " + view.getClass().getName());
+                        }
+                    openNewOPIView(runnerInput, page, position);
+                }
+                catch (Exception e)
+                {
+                    ErrorHandlerUtil.handleError(NLS.bind("Failed to run OPI {1} in view.", path), e);
+                }
+            }
+        });
+    }
+    
+    /** Open a new View that executes a display
+     *  @param runnerInput {@link RunnerInput}
+     *  @param page {@link IWorkbenchPage}
+     *  @param position {@link Position}
+     *  @return {@link OPIView}
+     *  @throws Exception on error
+     */
+    public static OPIView openNewOPIView(final RunnerInput runnerInput, final IWorkbenchPage page, final Position position) throws Exception
+    {
+        // Switch to suitable perspective?
         if (position != Position.DETACHED && position != Position.DEFAULT_VIEW &&
             !(page.getPerspective().getId().equals(OPIRunnerPerspective.ID)))
         {
@@ -256,8 +244,8 @@ public class RunModeService {
         // Open new View
         // View will receive input from us, should ignore previous memento
         OPIView.ignoreMemento();
-        final String secondID =  OPIView.createSecondaryID() + position.name();
-        final IViewPart view = page.showView(OPIView.ID, secondID, IWorkbenchPage.VIEW_ACTIVATE);
+        final String secondID =  OPIView.createSecondaryID();
+        final IViewPart view = page.showView(position.getOPIViewID(), secondID, IWorkbenchPage.VIEW_ACTIVATE);
         if (! (view instanceof OPIView))
             throw new PartInitException("Expected OPIView, got " + view);
         final OPIView opiView = (OPIView) view;
@@ -270,25 +258,25 @@ public class RunModeService {
             SingleSourcePlugin.getUIHelper().detachView(opiView);
 
         return opiView;
-	}
-	
-	/**
-	 * @param windowBounds
-	 */
-	private IWorkbenchWindow createNewWindow(Rectangle windowBounds) {
-		IWorkbenchWindow newWindow = null;
-		try {
-			newWindow =
-				PlatformUI.getWorkbench().openWorkbenchWindow(OPIRunnerPerspective.ID, null); //$NON-NLS-1$
-			if(windowBounds != null){
-				if(windowBounds.x >=0 && windowBounds.y > 1)
-					newWindow.getShell().setLocation(windowBounds.x, windowBounds.y);
-				newWindow.getShell().setSize(windowBounds.width+45, windowBounds.height + 165);
-			}
+    }
+    
+    /**
+     * @param windowBounds
+     */
+    private IWorkbenchWindow createNewWindow(Rectangle windowBounds) {
+        IWorkbenchWindow newWindow = null;
+        try {
+            newWindow =
+                PlatformUI.getWorkbench().openWorkbenchWindow(OPIRunnerPerspective.ID, null); //$NON-NLS-1$
+            if(windowBounds != null){
+                if(windowBounds.x >=0 && windowBounds.y > 1)
+                    newWindow.getShell().setLocation(windowBounds.x, windowBounds.y);
+                newWindow.getShell().setSize(windowBounds.width+45, windowBounds.height + 165);
+            }
 
-		} catch (WorkbenchException e) {
+        } catch (WorkbenchException e) {
             OPIBuilderPlugin.getLogger().log(Level.WARNING, "Failed to open new window", e);
-		}
-		return newWindow;
-	}
+        }
+        return newWindow;
+    }
 }

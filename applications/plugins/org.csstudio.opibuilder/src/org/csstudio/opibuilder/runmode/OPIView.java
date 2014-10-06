@@ -39,9 +39,14 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class OPIView extends ViewPart implements IOPIRuntime
 {
-    /** View ID registered in plugin.xml */
+    /** View ID registered in plugin.xml for use as a 'default' view.
+     *  
+     *  For views that should be displayed in designated
+     *  OPIRunnerPerspective.Position,
+     *  that Position.name() is added to the basic ID
+     */
     public static final String ID = "org.csstudio.opibuilder.opiView"; //$NON-NLS-1$
-
+    
     /** Memento tags */
     private static final String TAG_INPUT = "input", //$NON-NLS-1$
                                 TAG_FACTORY_ID = "factory_id"; //$NON-NLS-1$
@@ -282,5 +287,10 @@ public class OPIView extends ViewPart implements IOPIRuntime
      */
     public static void setOpenedByUser(boolean openedByUser) {
         OPIView.openedByUser = openedByUser;
+    }
+    
+    public String toString()
+    {
+        return "OPIView " + getViewSite().getId() + ":" + getViewSite().getSecondaryId() + ", " + input;
     }
 }
