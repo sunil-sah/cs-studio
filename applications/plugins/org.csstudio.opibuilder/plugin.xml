@@ -5,6 +5,9 @@
    <extension-point id="graphicalFeedbackFactory" name="graphicalFeedbackFactory" schema="schema/graphicalFeedbackFactory.exsd"/>
    <extension
          point="org.eclipse.ui.editors">
+      <!-- To be removed,
+           only using org.csstudio.opibuilder.runmode.OPIView,
+           started from Navigator or *.opi file via org.csstudio.opibuilder.DisplayLauncher
       <editor
             class="org.csstudio.opibuilder.runmode.OPIRunner"
             contributorClass="org.csstudio.opibuilder.runmode.OPIRunnerToolBarContributor"
@@ -14,11 +17,12 @@
             id="org.csstudio.opibuilder.OPIRunner"
             name="OPI Runtime">
       </editor>
+       -->
       <editor
             default="true"
             extensions="opi"
             icon="icons/OPIRunner.png"
-            id="org.csstudio.opibuilder.DisplayRuntime"
+            id="org.csstudio.opibuilder.DisplayLauncher"
             launcher="org.csstudio.opibuilder.runmode.DisplayLauncher"
             name="Display Runtime">
       </editor>
