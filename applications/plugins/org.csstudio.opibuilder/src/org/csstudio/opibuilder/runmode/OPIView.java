@@ -7,6 +7,9 @@
  ******************************************************************************/
 package org.csstudio.opibuilder.runmode;
 
+import java.util.logging.Level;
+
+import org.csstudio.opibuilder.OPIBuilderPlugin;
 import org.csstudio.opibuilder.model.DisplayModel;
 import org.csstudio.opibuilder.util.SingleSourceHelper;
 import org.csstudio.ui.util.thread.UIBundlingThread;
@@ -130,8 +133,13 @@ public class OPIView extends ViewPart implements IOPIRuntime
             return;
         
         // Load previously displayed input from memento
-        final IMemento inputMem = memento.getChild(TAG_INPUT);
         final String  factoryID = memento.getString(TAG_FACTORY_ID);
+        if (factoryID == null)
+        {
+            OPIBuilderPlugin.getLogger().log(Level.WARNING, toString() + " has memento with empty factory ID");
+            return;
+        }
+        final IMemento inputMem = memento.getChild(TAG_INPUT);
         final IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
         if (factory == null)
             throw new PartInitException(NLS.bind(
