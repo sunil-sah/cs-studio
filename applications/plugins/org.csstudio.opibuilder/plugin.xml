@@ -312,8 +312,7 @@
             fastViewWidthRatio="0.3"
             icon="icons/OPIRunner.png"
             id="org.csstudio.opibuilder.opiView"
-            name="OPI View"
-            restorable="true">
+            name="OPI View">
       </view>
       <view
             allowMultiple="true"
@@ -322,8 +321,7 @@
             fastViewWidthRatio="0.3"
             icon="icons/OPIRunner.png"
             id="org.csstudio.opibuilder.opiViewLEFT"
-            name="OPI View"
-            restorable="true">
+            name="OPI View">
       </view>
       <view
             allowMultiple="true"
@@ -332,8 +330,7 @@
             fastViewWidthRatio="0.3"
             icon="icons/OPIRunner.png"
             id="org.csstudio.opibuilder.opiViewRIGHT"
-            name="OPI View"
-            restorable="true">
+            name="OPI View">
       </view>
       <view
             allowMultiple="true"
@@ -342,8 +339,7 @@
             fastViewWidthRatio="0.3"
             icon="icons/OPIRunner.png"
             id="org.csstudio.opibuilder.opiViewTOP"
-            name="OPI View"
-            restorable="true">
+            name="OPI View">
       </view>
       <view
             allowMultiple="true"
@@ -352,8 +348,16 @@
             fastViewWidthRatio="0.3"
             icon="icons/OPIRunner.png"
             id="org.csstudio.opibuilder.opiViewBOTTOM"
-            name="OPI View"
-            restorable="true">
+            name="OPI View">
+      </view>
+      <view
+            allowMultiple="true"
+            category="org.csstudio.opibuilder.views"
+            class="org.csstudio.opibuilder.runmode.PlaceHolderView"
+            fastViewWidthRatio="0.3"
+            icon="icons/OPIRunner.png"
+            id="org.csstudio.opibuilder.placeHolder"
+            name="OPI Placeholder">
       </view>
    </extension>
    <extension

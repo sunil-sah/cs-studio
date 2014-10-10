@@ -8,9 +8,9 @@
 package org.csstudio.opibuilder.runmode;
 
 import org.csstudio.opibuilder.OPIBuilderPlugin;
+import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.IPlaceholderFolderLayout;
 
 /** Perspective for display runtime
  *  @author Xihui Chen - Original author
@@ -77,33 +77,49 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
     {
         final String editor = layout.getEditorArea();
         
+        // To debug layout: Install "Eclipse 4 Tools: Application Model Editor"
+        // The "E4 Model Spy" can then be started via Alt-Shift-F9.
+        // For css, add org.eclipse.e4.tools.emf.liveeditor and dependencies
+        
         // Hack using internal API:
         // Adds view stack in the editor area, so 'DEFAULT_VIEW' appears
         // similar to editor
         //
         // ModeledPageLayout real_layout = (ModeledPageLayout) layout;
         // real_layout.stackView(OPIView.ID + SECOND_ID, editor, false);
+        //
+        // .. but such OPIViews are then in the "org.eclipse.ui.editorss"(!) part,
+        // which is linked to Shared Elements/Area, ignored by the perspective,
+        // since it's meant for "Editors".
         
-        // Create ordinary view stack for 'DEFAULT_VIEW' close to editor area
-        final IPlaceholderFolderLayout center = layout.createFolder(Position.DEFAULT_VIEW.name(),
-                IPageLayout.RIGHT, IPageLayout.RATIO_MAX, editor);
-        center.addPlaceholder(OPIView.ID + SECOND_ID);
-        
-        final IPlaceholderFolderLayout left = layout.createFolder(Position.LEFT.name(),
+        final IFolderLayout left = layout.createFolder(Position.LEFT.name(),
                 IPageLayout.LEFT, 0.25f, editor);
         left.addPlaceholder(Position.LEFT.getOPIViewID() + SECOND_ID);
         
-        final IPlaceholderFolderLayout right = layout.createFolder(Position.RIGHT.name(),
+        final IFolderLayout right = layout.createFolder(Position.RIGHT.name(),
                 IPageLayout.RIGHT, 0.75f, editor);
         right.addPlaceholder(Position.RIGHT.getOPIViewID() + SECOND_ID);
         
-        final IPlaceholderFolderLayout top = layout.createFolder(Position.TOP.name(),
+        final IFolderLayout top = layout.createFolder(Position.TOP.name(),
                 IPageLayout.TOP, 0.25f, editor);
         top.addPlaceholder(Position.TOP.getOPIViewID() + SECOND_ID);
         
-        final IPlaceholderFolderLayout bottom = layout.createFolder(Position.BOTTOM.name(),
+        final IFolderLayout bottom = layout.createFolder(Position.BOTTOM.name(),
                 IPageLayout.BOTTOM, 0.75f, editor);
         bottom.addPlaceholder(Position.BOTTOM.getOPIViewID() + SECOND_ID);
+
+        // Create ordinary view stack for 'DEFAULT_VIEW' close to editor area
+        final IFolderLayout center = layout.createFolder(Position.DEFAULT_VIEW.name(),
+                IPageLayout.RIGHT, IPageLayout.RATIO_MIN, editor);
+        center.addPlaceholder(OPIView.ID + SECOND_ID);
+        // TODO Hide the "editor" part
+
+        // Placeholder views show location of folders for debugging purposes
+        center.addView(PlaceHolderView.ID + ":CENTER");
+        left.addView(PlaceHolderView.ID + ":LEFT");
+        right.addView(PlaceHolderView.ID + ":RIGHT");
+        top.addView(PlaceHolderView.ID + ":TOP");
+        bottom.addView(PlaceHolderView.ID + ":BOTTOM");
         
         if (!OPIBuilderPlugin.isRAP())
         {
