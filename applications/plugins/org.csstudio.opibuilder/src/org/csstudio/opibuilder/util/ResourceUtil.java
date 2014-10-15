@@ -138,6 +138,11 @@ public class ResourceUtil {
         
 	}
 
+	// TODO Check handling of "absolute" path and search path.
+	//      Why is AbstractOpenOPIAction resolving a path,
+	//      and not the OPIRuntimeDelegate itself?
+	//      Resolve this after settling on use of "Editor" or "View" for runtime,
+	//      since that will result in less code that needs to be updated.
 	/**Build the absolute path from the file path (without the file name part)
 	 * of the widget model and the relative path.
 	 * @param model the widget model
@@ -376,6 +381,7 @@ public class ResourceUtil {
 	 * If it is true, this method must be called in UI thread.
 	 * @return
 	 */
+	// TODO Rename to isExistingFile, but that also affects editor, symbol widget, ..
 	public static boolean isExsitingFile(final IPath absolutePath, boolean runInUIJob){
 		if(absolutePath instanceof URLPath)
 			if(isExistingURL(absolutePath, runInUIJob))
