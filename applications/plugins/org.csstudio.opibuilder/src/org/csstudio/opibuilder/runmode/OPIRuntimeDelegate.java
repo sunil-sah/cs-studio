@@ -152,11 +152,8 @@ public class OPIRuntimeDelegate implements IAdaptable{
         }
         catch (Exception e)
         {
-            if (SWT.getPlatform().startsWith("rap")) //$NON-NLS-1$
-                OPIBuilderPlugin.getLogger().log(Level.WARNING,    
-                        "Failed to open OPI file: " + input + "\n" + e.getMessage()); //$NON-NLS-2$
-            else
-                ErrorHandlerUtil.handleError("Failed to open opi file: " + input, e, true, true);
+            OPIBuilderPlugin.getLogger().log(Level.WARNING,    
+                    "Failed to open OPI file: " + input + "\n" + e.getMessage()); //$NON-NLS-2$
             throw new PartInitException("Failed to run OPI file: " + input, e);
         }
         

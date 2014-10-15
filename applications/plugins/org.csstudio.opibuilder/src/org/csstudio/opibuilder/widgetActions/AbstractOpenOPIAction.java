@@ -7,7 +7,6 @@
  ******************************************************************************/
 package org.csstudio.opibuilder.widgetActions;
 
-import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,30 +47,30 @@ public abstract class AbstractOpenOPIAction extends AbstractWidgetAction {
 	}
 
 	@Override
-	public void run() {
-		// read file
-		IPath absolutePath = getPath();
-		if (!absolutePath.isAbsolute()) {
+	public void run()
+	{
+		// Determine absolute path
+	    // TODO Do this in RuntimeDelegate, after settling View-or-Editor
+	    IPath absolutePath = getPath();
+		if (!absolutePath.isAbsolute())
+		{
 			absolutePath = ResourceUtil.buildAbsolutePath(getWidgetModel(),
 					getPath());		
-			if(!ResourceUtil.isExsitingFile(absolutePath, true)){
+			if (!ResourceUtil.isExsitingFile(absolutePath, true))
+			{
 				//search from OPI search path
 				absolutePath = ResourceUtil.getFileOnSearchPath(getPath(), true);
 			}
 		}
-		if (absolutePath == null || !ResourceUtil.isExsitingFile(absolutePath, true)) {
-			try {
-				throw new FileNotFoundException(
-						NLS.bind("The file {0} does not exist.",
-								getPath().toString()));
-			} catch (FileNotFoundException e) {
-				MessageDialog.openError(Display.getDefault().getActiveShell(),
-						"File Open Error", e.getMessage());
-				ConsoleService.getInstance().writeError(e.toString());
-				return;
-			}
+		if (absolutePath != null  &&  ResourceUtil.isExsitingFile(absolutePath, true))
+		    openOPI(absolutePath);
+		else
+		{
+		    final String error = NLS.bind("The file {0} does not exist.", getPath().toString());
+		    ConsoleService.getInstance().writeError(error);
+            MessageDialog.openError(Display.getDefault().getActiveShell(),
+	                        "File Open Error", error);
 		}
-		openOPI(absolutePath);
 	}
 
 	abstract protected void openOPI(IPath absolutePath);
