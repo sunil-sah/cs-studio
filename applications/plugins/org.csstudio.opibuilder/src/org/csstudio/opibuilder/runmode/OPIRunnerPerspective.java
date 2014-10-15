@@ -110,10 +110,21 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
 
         // Create ordinary view stack for 'DEFAULT_VIEW' close to editor area
         final IFolderLayout center = layout.createFolder(Position.DEFAULT_VIEW.name(),
-                IPageLayout.RIGHT, IPageLayout.RATIO_MIN, editor);
+                IPageLayout.RIGHT, 0.5f, editor);
         center.addPlaceholder(OPIView.ID + SECOND_ID);
+        
         // TODO Hide the "editor" part
-
+        ((org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout)layout).setEditorAreaVisible(false);
+        
+//        // TODO Hide editor without internal access,
+//        //      then move to org.csstudio.utility.singlesource.rcp
+//        // Locate MUIElement for "..editorss", then hide
+//        // This doesn't find the same as ModeledPageLayout.eaRef
+//        final EModelService model = (EModelService) PlatformUI.getWorkbench().getService(EModelService.class);
+//        MApplication root = (MApplication) PlatformUI.getWorkbench().getService(MApplication.class);
+//        MUIElement editorPart = model.find("org.eclipse.ui.editorss", root);
+//        editorPart.setToBeRendered(false);
+        
         // Placeholder views show location of folders for debugging purposes
         center.addView(PlaceHolderView.ID + ":CENTER");
         left.addView(PlaceHolderView.ID + ":LEFT");
