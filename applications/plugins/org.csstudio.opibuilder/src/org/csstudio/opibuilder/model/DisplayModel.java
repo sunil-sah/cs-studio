@@ -10,7 +10,6 @@ package org.csstudio.opibuilder.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.csstudio.opibuilder.OPIBuilderPlugin;
 import org.csstudio.opibuilder.datadefinition.DisplayScaleData;
 import org.csstudio.opibuilder.properties.ActionsProperty;
 import org.csstudio.opibuilder.properties.BooleanProperty;
@@ -336,4 +335,5 @@ public class DisplayModel extends AbstractContainerModel {
 	public void setFrameRate(double rate) {
 		setPropertyValue(PROP_FRAME_RATE, rate);
 	}
+	
 }
