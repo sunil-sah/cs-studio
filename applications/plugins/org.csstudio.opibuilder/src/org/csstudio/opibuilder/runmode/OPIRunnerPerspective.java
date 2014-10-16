@@ -7,10 +7,24 @@
  ******************************************************************************/
 package org.csstudio.opibuilder.runmode;
 
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.csstudio.opibuilder.OPIBuilderPlugin;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPage;
 
 /** Perspective for display runtime
  *  @author Xihui Chen - Original author
@@ -81,17 +95,6 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
         // The "E4 Model Spy" can then be started via Alt-Shift-F9.
         // For css, add org.eclipse.e4.tools.emf.liveeditor and dependencies
         
-        // Hack using internal API:
-        // Adds view stack in the editor area, so 'DEFAULT_VIEW' appears
-        // similar to editor
-        //
-        // ModeledPageLayout real_layout = (ModeledPageLayout) layout;
-        // real_layout.stackView(OPIView.ID + SECOND_ID, editor, false);
-        //
-        // .. but such OPIViews are then in the "org.eclipse.ui.editorss"(!) part,
-        // which is linked to Shared Elements/Area, ignored by the perspective,
-        // since it's meant for "Editors".
-        
         final IFolderLayout left = layout.createFolder(Position.LEFT.name(),
                 IPageLayout.LEFT, 0.25f, editor);
         left.addPlaceholder(Position.LEFT.getOPIViewID() + SECOND_ID);
@@ -109,21 +112,37 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
         bottom.addPlaceholder(Position.BOTTOM.getOPIViewID() + SECOND_ID);
 
         // Create ordinary view stack for 'DEFAULT_VIEW' close to editor area
+        // Alternative hack using internal API:
+        // Adds view stack in the editor area, so 'DEFAULT_VIEW' appears
+        // similar to editor
+        //
+        // ModeledPageLayout real_layout = (ModeledPageLayout) layout;
+        // real_layout.stackView(OPIView.ID + SECOND_ID, editor, false);
+        //
+        // .. but such OPIViews are then in the IPageLayout.ID_EDITOR_AREA="org.eclipse.ui.editorss"(!) part,
+        // which is linked to Shared Elements/Area, ignored by the perspective,
+        // since it's meant for "Editors".
         final IFolderLayout center = layout.createFolder(Position.DEFAULT_VIEW.name(),
                 IPageLayout.RIGHT, 0.5f, editor);
         center.addPlaceholder(OPIView.ID + SECOND_ID);
         
-        // TODO Hide the "editor" part
-        ((org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout)layout).setEditorAreaVisible(false);
+        // Hide the "editor" part
+        // Public API, but does NOT hide the editor area?!
+//        final IWorkbench service_provider = PlatformUI.getWorkbench();
+//        final EModelService model_service = (EModelService) service_provider.getService(EModelService.class);
+//        final MApplication root = (MApplication) service_provider.getService(MApplication.class); // IEclipseContext.class?
+//        dump(root);
+//        final MPerspective this_perspective = (MPerspective) model_service.find(OPIRunnerPerspective.ID, root);
+//        // Tends to hold one "AreaImpl" and one "PlaceholderImpl", find only the latter
+//        final List<MPlaceholder> parts = model_service.findElements(this_perspective, IPageLayout.ID_EDITOR_AREA, MPlaceholder.class, null);
+//        if (parts.size() == 1)
+//            parts.get(0).setToBeRendered(false);
+//        else
+//            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Cannot locate editor placeholder");
         
-//        // TODO Hide editor without internal access,
-//        //      then move to org.csstudio.utility.singlesource.rcp
-//        // Locate MUIElement for "..editorss", then hide
-//        // This doesn't find the same as ModeledPageLayout.eaRef
-//        final EModelService model = (EModelService) PlatformUI.getWorkbench().getService(EModelService.class);
-//        MApplication root = (MApplication) PlatformUI.getWorkbench().getService(MApplication.class);
-//        MUIElement editorPart = model.find("org.eclipse.ui.editorss", root);
-//        editorPart.setToBeRendered(false);
+        // Shorter, works, but internal API:
+        ((org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout)layout).setEditorAreaVisible(false);
+       
         
         // Placeholder views show location of folders for debugging purposes
         center.addView(PlaceHolderView.ID + ":CENTER");
@@ -138,6 +157,24 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
             layout.addShowViewShortcut(ID_CONSOLE_VIEW);
             left.addPlaceholder(ID_NAVIGATOR);
             layout.addShowViewShortcut(ID_NAVIGATOR);
+        }
+    }
+    
+    void dump(MUIElement element)
+    {
+        dump(0, element);
+    }
+
+    private void dump(int level, MUIElement element)
+    {
+        for (int i=0; i<level; ++i)
+            System.out.print("  ");
+        System.out.println(element);
+        if (element instanceof MElementContainer)
+        {
+            final MElementContainer<MUIElement> container = (MElementContainer) element;
+            for (MUIElement child : container.getChildren())
+                dump(level+1, child);
         }
     }
 }
